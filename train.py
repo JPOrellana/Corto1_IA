@@ -8,7 +8,7 @@ env = gym.make('FrozenLake-v1', map_name="4x4", is_slippery=True, render_mode='h
 q_table = np.zeros((env.observation_space.n, env.action_space.n))
 
 # Parámetros Q-learning 
-total_episodes = 10000       
+total_episodes = 100       
 learning_rate = 0.8          
 max_steps = 99              
 gamma = 0.95                 
