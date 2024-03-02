@@ -1,4 +1,4 @@
-### Corto 1 - Inteligencia Artificial  :computer::card_file_box:
+### Corto 1 - Inteligencia Artificial  :computer:
 ***
 - Luis Pedro Montenegro 21699
 - José Pablo Orellana 21970
