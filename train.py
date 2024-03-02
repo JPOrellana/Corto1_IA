@@ -1,10 +1,10 @@
 import gymnasium as gym
 import numpy as np
+from gymnasium.envs.toy_text.frozen_lake import generate_random_map
 
-# Environment setup with visualization
-env = gym.make('FrozenLake-v1', map_name="4x4", is_slippery=True, render_mode='human')
+env = gym.make('FrozenLake-v1',desc=generate_random_map(size=4), is_slippery=True, render_mode='human')
 
-# Initialize Q-table
+# Inicializar Q-table
 q_table = np.zeros((env.observation_space.n, env.action_space.n))
 
 # Parámetros Q-learning 
@@ -17,7 +17,7 @@ gamma = 0.95
 epsilon = 1.0                
 max_epsilon = 1.0            
 min_epsilon = 0.01           
-decay_rate = 0.005           
+decay_rate = 0.001           
 
 # Entrenamiento Q-learning 
 for episode in range(total_episodes):
@@ -45,23 +45,25 @@ for episode in range(total_episodes):
 
     # Decay epsilon to reduce exploration over time
     epsilon = min_epsilon + (max_epsilon - min_epsilon) * np.exp(-decay_rate * episode)
+    print(f"episode {episode} finished")
 
 # Cerrar el ambiente
 env.close()
 
 # Testear el agente ya entrenado
-env = gym.make('FrozenLake-v1', map_name="4x4", is_slippery=True, render_mode='human')
+env = gym.make('FrozenLake-v1', desc = generate_random_map(size=4), is_slippery=True, render_mode='human')
 state = env.reset()[0]
 finished = False
 
+print("Start testing")
 while not finished:
     action = np.argmax(q_table[state, :])
     state, reward, finished, info, _ = env.step(action)
     if finished:
         if reward == 1:
-            print("Goal reached!")
+            print("Success")
         else:
-            print("Fell into a hole.")
+            print("Failure")
         break
 
 env.close()
