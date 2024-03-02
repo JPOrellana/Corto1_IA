@@ -1,7 +1,6 @@
-# Corto1_IA
-[Pablo Orellana](https://github.com/JPOrellana)
-[Luis Montenegro](https://github.com/LuisMontenegro21)
-
-## Libraries needed
-- pip install gymnasium
-- pip install gymnasium[toy-text]
+### Corto 1 - Inteligencia Artificial  :computer::card_file_box:
+***
+- Luis Pedro Montenegro 21699
+- José Pablo Orellana 21970
+***
+**Enlace del video explicativo:** [Video Youtube](https://youtu.be/8ypXqOlmb-A). 
