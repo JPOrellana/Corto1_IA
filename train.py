@@ -1,65 +1,67 @@
 import gymnasium as gym
 import numpy as np
-env = gym.make('FrozenLake-v1', map_name = "4x4", is_slippery = True, render_mode = 'human')
 
-state = env.reset()[0]
-terminated = False
-truncated = False
+# Environment setup with visualization
+env = gym.make('FrozenLake-v1', map_name="4x4", is_slippery=True, render_mode='human')
 
-# para el Q-Learning
+# Initialize Q-table
 q_table = np.zeros((env.observation_space.n, env.action_space.n))
-gamma = 0.95
-learning_rate = 0.8
-episodes = 1000
+
+# Parámetros Q-learning 
+total_episodes = 10000       
+learning_rate = 0.8          
+max_steps = 99              
+gamma = 0.95                 
 
 # Parámetros de exploración
-epsilon = 1.0
-max_ep = 1.0
-min_ep = 0.01
-decay = 0.005 
+epsilon = 1.0                
+max_epsilon = 1.0            
+min_epsilon = 0.01           
+decay_rate = 0.005           
 
-
-for i in range(episodes):
-    state = env.reset()
-    step = 0
+# Entrenamiento Q-learning 
+for episode in range(total_episodes):
+    # Reiniciar para cada episodio
+    state = env.reset()[0]  
     finished = False
-    for step in range(99):
 
-        tradeoff = np.random.uniform(0,1)
-
-        if tradeoff > epsilon:
-            action = np.argmax(q_table[state,:])
-
-        else:
+    for step in range(max_steps):
+        # Elegir una acción basado en el épsilon greedy
+        if np.random.uniform(0, 1) < epsilon:
             action = env.action_space.sample()
-        
-        new_state, reward, finished, _ = env.step(action)
+        else:
+            action = np.argmax(q_table[state, :])
 
+        # Tomar la acción y observar el resultado
+        new_state, reward, finished, info, _ = env.step(action)  
+
+        # Update del Q-table usando la función Q-table
         q_table[state, action] = q_table[state, action] + learning_rate * (reward + gamma * np.max(q_table[new_state, :]) - q_table[state, action])
 
         state = new_state
 
-        if finished == True:
+        if finished:
             break
-    # decrecer epsilon por cada iteracion para que sea menos codicioso
-    epsilon = min_ep + (max_ep - min_ep) * np.exp(-decay * i) 
 
-env.reset()
-rewards = []
-for episode in range(100):
-    state = env.reset()
-    step = 0
-    finished = False
-    total_rewards = 0
-    for step in range(99):
-        action = np.argmax(q_table[state,:])
-        new_state, reward, done, info = env.step(action)
-        total_rewards += reward
-        
-        if done:
-            rewards.append(total_rewards)
-            break
-        state = new_state
+    # Decay epsilon to reduce exploration over time
+    epsilon = min_epsilon + (max_epsilon - min_epsilon) * np.exp(-decay_rate * episode)
+
+# Cerrar el ambiente
+env.close()
+
+# Testear el agente ya entrenado
+env = gym.make('FrozenLake-v1', map_name="4x4", is_slippery=True, render_mode='human')
+state = env.reset()[0]
+finished = False
+
+while not finished:
+    action = np.argmax(q_table[state, :])
+    state, reward, finished, info, _ = env.step(action)
+    if finished:
+        if reward == 1:
+            print("Goal reached!")
+        else:
+            print("Fell into a hole.")
+        break
 
 env.close()
-print ("Score over time: " + str(sum(rewards)/100))
